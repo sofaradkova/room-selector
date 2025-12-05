@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Floorplan Mask Viewer — no flicker, scrollable</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    /* Layout: sidebar + content. Allow scrolling in right panel */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 12px;
+      display: flex;
+      gap: 16px;
+      height: calc(100vh - 24px);
+      box-sizing: border-box;
+    }
+
+    #sidebar {
+      width: 260px;
+      max-height: 100%;
+      overflow: auto;
+      border-right: 1px solid #ddd;
+      padding-right: 12px;
+      box-sizing: border-box;
+    }
+
+    /* Right panel is scrollable if content larger than viewport */
+    #canvas-wrapper {
+      flex: 1 1 auto;
+      max-height: 100%;
+      overflow: auto;            /* <--- this allows vertical scroll when image is tall */
+      background: #f8f8f8;
+      display: flex;
+      align-items: flex-start;   /* top-align the canvas */
+      justify-content: center;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+
+    /* We set the canvas to display at 100% width of wrapper's available width
+       while its internal resolution remains image natural size (pixel-perfect) */
+    #floorCanvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-width: 1600px; /* optional cap */
+      border: 1px solid #aaa;
+      background: #fff;
+    }
+
+    .label-item {
+      padding: 8px;
+      cursor: pointer;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+    }
+    .label-item:hover { background: #f7f7f7; }
+    .label-item.active { background: #eef6ff; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.03); }
+
+    .room-name { font-weight: 600; }
+    .badge {
+      padding: 4px 8px;
+      border-radius: 14px;
+      font-size: 0.85em;
+      color: white;
+    }
+    .taken { background: #dc3545; }        /* red */
+    .available { background: #28a745; }    /* green */
+
+    #controls { margin-bottom: 12px; }
+    #legend { margin-top: 12px; font-size: 0.9em; color: #555; }
+    #legend .legend-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+    #legend .swatch { width:20px; height:14px; border-radius:3px; display:inline-block; border:1px solid rgba(0,0,0,0.08); }
+  </style>
+</head>
+<body>
+  <div id="sidebar">
+    <div id="controls">
+      <button id="clearBtn">Clear</button>
+      <label style="display:inline-block;margin-left:10px;">
+        <input type="checkbox" id="singleMode" checked> single-select
+      </label>
+    </div>
+
+    <div id="labelList">Loading labels…</div>
+
+    <div id="legend">
+      <div style="font-weight:600; margin-bottom:6px;">Legend</div>
+      <div class="legend-row"><span class="swatch" id="swatch-taken"></span> Taken</div>
+      <div class="legend-row"><span class="swatch" id="swatch-available"></span> Available</div>
+    </div>
+  </div>
+
+  <div id="canvas-wrapper">
+    <canvas id="floorCanvas"></canvas>
+  </div>
+
+<script>
+(async function(){
+  // CONFIG
+  const manifestUrl = 'labels.json';
+  const basePath = './';
+  const COLOR_TAKEN = [220, 20, 60];
+  const COLOR_AVAILABLE = [50, 205, 50];
+  const DEFAULT_ALPHA = 0.45;
+
+  function ensureArrayOf3(c) {
+    if (!c) return null;
+    if (Array.isArray(c) && c.length >= 3) return [c[0], c[1], c[2]];
+    return null;
+  }
+
+  // deterministic boolean from string
+  function hashStringToBool(s) {
+    let h = 2166136261 >>> 0;
+    for (let i=0;i<s.length;i++){
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619) >>> 0;
+    }
+    return (h & 1) === 1;
+  }
+
+  // load manifest
+  const manifest = await fetch(manifestUrl).then(r => r.json());
+  const baseImageUrl = basePath + (manifest.base_image || 'floorplan6.png');
+  const labels = manifest.labels || [];
+
+  document.getElementById('swatch-taken').style.background = `rgb(${COLOR_TAKEN.join(',')})`;
+  document.getElementById('swatch-available').style.background = `rgb(${COLOR_AVAILABLE.join(',')})`;
+
+  // DOM refs
+  const labelList = document.getElementById('labelList');
+  const canvas = document.getElementById('floorCanvas');
+  const ctx = canvas.getContext('2d');
+  const clearBtn = document.getElementById('clearBtn');
+  const singleModeCheckbox = document.getElementById('singleMode');
+
+  // load base image
+  const baseImg = new Image();
+  baseImg.src = baseImageUrl;
+  await new Promise((res,rej)=>{ baseImg.onload = res; baseImg.onerror = rej; });
+
+  // set canvas internal resolution to image natural size
+  canvas.width = baseImg.naturalWidth;
+  canvas.height = baseImg.naturalHeight;
+
+  // visually constrain via CSS (handled by #floorCanvas width:100% and wrapper scroll)
+  drawBase();
+
+  function drawBase(){
+    // draw base at internal resolution (0,0,...)
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+    ctx.drawImage(baseImg, 0, 0, canvas.width, canvas.height);
+  }
+
+  // Create per-mask cached colored canvases (preload + colorize)
+  // This ensures drawing is synchronous later and eliminates flicker.
+  async function preloadAndColorizeMasks() {
+    // create a temporary canvas same size as main canvas
+    const tmp = document.createElement('canvas');
+    tmp.width = canvas.width;
+    tmp.height = canvas.height;
+    const tmpCtx = tmp.getContext('2d');
+
+    // helper to load image
+    function loadImage(src) {
+      return new Promise((res) => {
+        const im = new Image();
+        im.crossOrigin = 'anonymous';
+        im.onload = () => res(im);
+        im.onerror = (e) => {
+          console.warn('Mask load error', src, e);
+          res(null);
+        };
+        im.src = src;
+      });
+    }
+
+    for (let i = 0; i < labels.length; i++) {
+      const L = labels[i];
+      // occupancy and color defaults
+      L._occupied = (typeof L.occupied === 'boolean') ? L.occupied : hashStringToBool(String(L.text || L.index || ''));
+      L._color = ensureArrayOf3(L.color) || (L._occupied ? COLOR_TAKEN : COLOR_AVAILABLE);
+
+      // resolve mask URL
+      if (L.mask_file && !L.mask_file.startsWith('http') && !L.mask_file.startsWith('/')) {
+        L._maskUrl = basePath + L.mask_file;
+      } else {
+        L._maskUrl = L.mask_file || null;
+      }
+
+      if (!L._maskUrl) {
+        L._coloredCanvas = null;
+        continue;
+      }
+
+      const mImg = await loadImage(L._maskUrl);
+      if (!mImg) {
+        L._coloredCanvas = null;
+        continue;
+      }
+
+      // draw mask into tmp
+      tmpCtx.clearRect(0,0,tmp.width,tmp.height);
+      tmpCtx.drawImage(mImg, 0, 0, tmp.width, tmp.height);
+      const md = tmpCtx.getImageData(0,0,tmp.width,tmp.height);
+      const data = md.data;
+
+      // create colored canvas and write tinted pixels
+      const colored = document.createElement('canvas');
+      colored.width = tmp.width;
+      colored.height = tmp.height;
+      const cctx = colored.getContext('2d');
+      // start with transparent image data
+      const out = cctx.createImageData(tmp.width, tmp.height);
+      const outd = out.data;
+
+      for (let p=0;p<data.length;p+=4){
+        const maskVal = data[p]; // grayscale red channel
+        if (maskVal > 10) {
+          outd[p]   = L._color[0];
+          outd[p+1] = L._color[1];
+          outd[p+2] = L._color[2];
+          outd[p+3] = Math.round(255 * DEFAULT_ALPHA * (maskVal/255));
+        } else {
+          outd[p+3] = 0;
+        }
+      }
+      cctx.putImageData(out, 0, 0);
+      L._coloredCanvas = colored;
+    }
+  }
+
+  // preload all masks (this may take a short moment on first load)
+  await preloadAndColorizeMasks();
+
+  // After preloading, initial draw
+  drawBase();
+
+  // state set
+  const activeSet = new Set();
+
+  // UI builder
+  function makeLabelElement(lbl, idx) {
+    const div = document.createElement('div');
+    div.className = 'label-item';
+    div.dataset.idx = idx;
+
+    const left = document.createElement('div');
+    left.className = 'room-name';
+    left.textContent = String(lbl.text || `Room ${idx}`);
+
+    const badge = document.createElement('div');
+    badge.className = 'badge ' + (lbl._occupied ? 'taken' : 'available');
+    badge.textContent = lbl._occupied ? 'Taken' : 'Available';
+
+    div.appendChild(left);
+    div.appendChild(badge);
+
+    div.addEventListener('click', () => {
+      const id = Number(div.dataset.idx);
+      if (singleModeCheckbox.checked) {
+        if (activeSet.has(id)) activeSet.delete(id);
+        else { activeSet.clear(); activeSet.add(id); }
+      } else {
+        if (activeSet.has(id)) activeSet.delete(id);
+        else activeSet.add(id);
+      }
+
+      // update UI classes
+      document.querySelectorAll('.label-item').forEach(el => {
+        el.classList.toggle('active', activeSet.has(Number(el.dataset.idx)));
+      });
+
+      // draw synchronously from cached colored canvases (no async/await here)
+      drawBase();
+      for (const id of Array.from(activeSet).sort((a,b)=>a-b)){
+        const L = labels[id];
+        if (!L || !L._coloredCanvas) continue;
+        ctx.drawImage(L._coloredCanvas, 0, 0);
+      }
+    });
+
+    return div;
+  }
+
+  // populate list
+  labelList.innerHTML = '';
+  labels.forEach((lbl,i) => {
+    const el = makeLabelElement(lbl,i);
+    labelList.appendChild(el);
+  });
+
+  // Clear button
+  clearBtn.addEventListener('click', () => {
+    activeSet.clear();
+    drawBase();
+    document.querySelectorAll('.label-item').forEach(el => el.classList.remove('active'));
+  });
+
+})();
+</script>
+</body>
+</html>
+
+

@@ -1,0 +1,138 @@
+{
+  "base_image": "floorplan6.png",
+  "labels": [
+    {
+      "index": 0,
+      "text": "B1016A",
+      "mask_id": 2,
+      "mask_file": "mask_0.png",
+      "occupied": false
+    },
+    {
+      "index": 1,
+      "text": "B1016B",
+      "mask_id": 0,
+      "mask_file": "mask_1.png",
+      "occupied": true
+    },
+    {
+      "index": 2,
+      "text": "B1016C",
+      "mask_id": 1,
+      "mask_file": "mask_2.png",
+      "occupied": false
+    },
+    {
+      "index": 3,
+      "text": "B1016D",
+      "mask_id": 3,
+      "mask_file": "mask_3.png",
+      "occupied": true
+    },
+    {
+      "index": 4,
+      "text": "B1014B",
+      "mask_id": 11,
+      "mask_file": "mask_4.png",
+      "occupied": false
+    },
+    {
+      "index": 5,
+      "text": "B1014C",
+      "mask_id": 12,
+      "mask_file": "mask_5.png",
+      "occupied": true
+    },
+    {
+      "index": 6,
+      "text": "B1015A",
+      "mask_id": 7,
+      "mask_file": "mask_6.png",
+      "occupied": false
+    },
+    {
+      "index": 7,
+      "text": "B1015B",
+      "mask_id": 4,
+      "mask_file": "mask_7.png",
+      "occupied": true
+    },
+    {
+      "index": 8,
+      "text": "B1015C",
+      "mask_id": 5,
+      "mask_file": "mask_8.png",
+      "occupied": false
+    },
+    {
+      "index": 9,
+      "text": "B1015D",
+      "mask_id": 6,
+      "mask_file": "mask_9.png",
+      "occupied": true
+    },
+    {
+      "index": 10,
+      "text": "B1014D",
+      "mask_id": 15,
+      "mask_file": "mask_10.png",
+      "occupied": false
+    },
+    {
+      "index": 11,
+      "text": "B1012A",
+      "mask_id": 13,
+      "mask_file": "mask_11.png",
+      "occupied": true
+    },
+    {
+      "index": 12,
+      "text": "B1011B",
+      "mask_id": 8,
+      "mask_file": "mask_12.png",
+      "occupied": false
+    },
+    {
+      "index": 13,
+      "text": "B1012B",
+      "mask_id": 17,
+      "mask_file": "mask_13.png",
+      "occupied": true
+    },
+    {
+      "index": 14,
+      "text": "B1012C",
+      "mask_id": 16,
+      "mask_file": "mask_14.png",
+      "occupied": false
+    },
+    {
+      "index": 15,
+      "text": "B1011C",
+      "mask_id": 9,
+      "mask_file": "mask_15.png",
+      "occupied": true
+    },
+    {
+      "index": 16,
+      "text": "B1012D",
+      "mask_id": 18,
+      "mask_file": "mask_16.png",
+      "occupied": false
+    },
+    {
+      "index": 17,
+      "text": "B1011D",
+      "mask_id": 19,
+      "mask_file": "mask_17.png",
+      "occupied": true
+    },
+    {
+      "index": 18,
+      "text": "B1014A",
+      "mask_id": 14,
+      "mask_file": "mask_18.png",
+      "occupied": false
+    }
+  ]
+}
