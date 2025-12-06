@@ -21,14 +21,13 @@ def _clahe_enhance_gray(gray: np.ndarray, clipLimit: float = 2.0, tileGridSize: 
 
 def ocr_image_tesseract(image_path_or_array,
                         tess_config: str = "--psm 12",
-                        min_confidence: int = 20,
-                        pattern: Optional[re.Pattern] = None) -> List[Dict]:
+                        pattern: Optional[re.Pattern] = None,
+                        min_confidence: float = None) -> List[Dict]:
     """
     Run pytesseract on the image (path or numpy array).
-    Returns list of dicts:
-      {'text','confidence' (0..100),'bbox':(x,y,w,h),'cx','cy','source':'tesseract'}
+    If min_confidence is set, entries with confidence < min_confidence are excluded.
     """
-    # load image
+    # load image (same as you already have)...
     if isinstance(image_path_or_array, str):
         img = cv2.imread(image_path_or_array, cv2.IMREAD_COLOR)
     else:
@@ -42,37 +41,52 @@ def ocr_image_tesseract(image_path_or_array,
     ocr_data = pytesseract.image_to_data(enhanced, output_type=Output.DICT, config=tess_config)
 
     out = []
-    n = len(ocr_data['text'])
+    n = len(ocr_data.get('text', []))
     for i in range(n):
         raw_text = (ocr_data['text'][i] or "").strip()
-        conf_raw = ocr_data['conf'][i]
+        if not raw_text:
+            continue
+
+        # parse confidence robustly
+        conf_raw = ocr_data.get('conf', [None]*n)[i]
         try:
             conf = float(conf_raw)
         except Exception:
             conf = -1.0
-        if not raw_text:
-            continue
-        if conf < min_confidence:
+
+        # optional confidence threshold
+        if (min_confidence is not None) and (conf < float(min_confidence)):
             continue
 
-        # bbox fields (left, top, width, height)
-        try:
-            x = int(ocr_data['left'][i]); y = int(ocr_data['top'][i])
-            w = int(ocr_data['width'][i]); h = int(ocr_data['height'][i])
-        except Exception:
-            continue
-
-        # optional pattern filter
+        # optional pattern filtering
         if pattern is not None and not pattern.match(raw_text):
             continue
 
-        cx = x + w / 2.0; cy = y + h / 2.0
+        # safe bbox parsing: keep None if missing instead of skipping the entry
+        def _safe_int_field(key, idx):
+            try:
+                val = ocr_data.get(key, [None]*n)[idx]
+                if val is None or val == '':
+                    return None
+                return int(float(val))
+            except Exception:
+                return None
+
+        x = _safe_int_field('left', i)
+        y = _safe_int_field('top', i)
+        w = _safe_int_field('width', i)
+        h = _safe_int_field('height', i)
+
+        # compute center if bbox present, otherwise None
+        cx = (x + w / 2.0) if (x is not None and w is not None) else None
+        cy = (y + h / 2.0) if (y is not None and h is not None) else None
+
         out.append({
             "text": raw_text,
             "confidence": float(conf),
             "bbox": (x, y, w, h),
-            "cx": float(cx),
-            "cy": float(cy),
+            "cx": cx,
+            "cy": cy,
             "source": "tesseract"
         })
     return out
@@ -221,7 +235,6 @@ def run_ocr_combined(image_path: str,
                      use_easyocr: bool = True,
                      pattern: Optional[re.Pattern] = DEFAULT_PATTERN,
                      tess_config: str = "--psm 12",
-                     tesseract_min_conf: int = 20,
                      easy_iou_thresh: float = 0.25,
                      easy_dist_thresh: float = 30.0,
                      easy_reader: Optional["easyocr.Reader"] = None) -> List[Dict]:
@@ -230,7 +243,7 @@ def run_ocr_combined(image_path: str,
     merges results, normalizes text, and returns per-label dicts with keys:
       'text', 'confidence', 'bbox', 'centroid', 'source'
     """
-    tlist = ocr_image_tesseract(image_path, tess_config, min_confidence=tesseract_min_conf, pattern=pattern)
+    tlist = ocr_image_tesseract(image_path, tess_config, pattern=pattern)
 
     elist = ocr_image_easyocr(image_path, pattern=pattern, reader=easy_reader)
 
@@ -252,25 +265,3 @@ def run_ocr_combined(image_path: str,
             "source": item.get("source", "unknown")
         })
     return out
-
-
-# Small CLI for quick testing
-if __name__ == "__main__":
-    import argparse, json, os
-    parser = argparse.ArgumentParser(description="Run combined OCR (pytesseract + EasyOCR) on an image.")
-    parser.add_argument("image", help="path to floorplan image")
-    parser.add_argument("--no-easyocr", action="store_true", help="skip EasyOCR pass")
-    parser.add_argument("--out-json", default=None, help="write combined labels to JSON")
-    parser.add_argument("--min-conf", type=int, default=20, help="min tesseract confidence (int)")
-    args = parser.parse_args()
-
-    labels = run_ocr_combined(args.image, use_easyocr=not args.no_easyocr, tesseract_min_conf=args.min_conf)
-    print(f"Found {len(labels)} labels")
-    for L in labels:
-        print(L["text"], L["confidence"], L["bbox"], L["centroid"], L["source"])
-
-    if args.out_json:
-        os.makedirs(os.path.dirname(args.out_json) or ".", exist_ok=True)
-        with open(args.out_json, "w", encoding="utf8") as f:
-            json.dump(labels, f, indent=2)
-        print("Wrote", args.out_json)
