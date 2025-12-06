@@ -3,10 +3,10 @@ os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
 import logging
 from pathlib import Path
 from src.sam_masks import generate_masks, save_masks_pickle
-#from src.ocr_labels import run_ocr_on_image
+from src.ocr_labels import run_ocr_on_image
 #from src.matcher import one_to_one_match_by_centroid
 #from src.box_filler import fill_missing_masks
-from src.utils import save_labels_json, save_mask_png, load_masks_pickle, save_masks_pickle
+from src.utils import save_labels_json, save_mask_png, load_masks_pickle
 
 logging.basicConfig(level=logging.INFO)
 BASE = Path("data")

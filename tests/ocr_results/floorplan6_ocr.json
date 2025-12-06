@@ -1,0 +1,242 @@
+[
+  {
+    "text": "B1016A",
+    "confidence": 47.0,
+    "bbox": [
+      475,
+      142,
+      59,
+      13
+    ],
+    "centroid": [
+      504.5,
+      148.5
+    ],
+    "source": "tesseract"
+  },
+  {
+    "text": "B1016B",
+    "confidence": 84.0,
+    "bbox": [
+      626,
+      142,
+      57,
+      13
+    ],
+    "centroid": [
+      654.5,
+      148.5
+    ],
+    "source": "tesseract"
+  },
+  {
+    "text": "B1016C",
+    "confidence": 91.0,
+    "bbox": [
+      771,
+      142,
+      58,
+      13
+    ],
+    "centroid": [
+      800.0,
+      148.5
+    ],
+    "source": "tesseract"
+  },
+  {
+    "text": "B1016D",
+    "confidence": 90.0,
+    "bbox": [
+      922,
+      226,
+      60,
+      13
+    ],
+    "centroid": [
+      952.0,
+      232.5
+    ],
+    "source": "tesseract"
+  },
+  {
+    "text": "B1015D",
+    "confidence": 90.0,
+    "bbox": [
+      922,
+      608,
+      60,
+      13
+    ],
+    "centroid": [
+      952.0,
+      614.5
+    ],
+    "source": "tesseract"
+  },
+  {
+    "text": "B1014D",
+    "confidence": 91.0,
+    "bbox": [
+      1543,
+      741,
+      60,
+      13
+    ],
+    "centroid": [
+      1573.0,
+      747.5
+    ],
+    "source": "tesseract"
+  },
+  {
+    "text": "B1012A",
+    "confidence": 43.0,
+    "bbox": [
+      1635,
+      1057,
+      59,
+      13
+    ],
+    "centroid": [
+      1664.5,
+      1063.5
+    ],
+    "source": "tesseract"
+  },
+  {
+    "text": "B1011B",
+    "confidence": 80.0,
+    "bbox": [
+      1085,
+      1104,
+      57,
+      13
+    ],
+    "centroid": [
+      1113.5,
+      1110.5
+    ],
+    "source": "tesseract"
+  },
+  {
+    "text": "B1011C",
+    "confidence": 89.0,
+    "bbox": [
+      1084,
+      1410,
+      58,
+      13
+    ],
+    "centroid": [
+      1113.0,
+      1416.5
+    ],
+    "source": "tesseract"
+  },
+  {
+    "text": "B1012D",
+    "confidence": 91.0,
+    "bbox": [
+      1634,
+      1507,
+      60,
+      13
+    ],
+    "centroid": [
+      1664.0,
+      1513.5
+    ],
+    "source": "tesseract"
+  },
+  {
+    "text": "B1011D",
+    "confidence": 91.0,
+    "bbox": [
+      1081,
+      1561,
+      59,
+      13
+    ],
+    "centroid": [
+      1110.5,
+      1567.5
+    ],
+    "source": "tesseract"
+  },
+  {
+    "text": "B1014A",
+    "confidence": 98.92966078105343,
+    "bbox": [
+      1541,
+      289,
+      64,
+      20
+    ],
+    "centroid": [
+      1573.0,
+      299.0
+    ],
+    "source": "easyocr"
+  },
+  {
+    "text": "B1014B",
+    "confidence": 92.6175710030704,
+    "bbox": [
+      1541,
+      441,
+      64,
+      20
+    ],
+    "centroid": [
+      1573.0,
+      451.0
+    ],
+    "source": "easyocr"
+  },
+  {
+    "text": "B1014C",
+    "confidence": 99.6792467041341,
+    "bbox": [
+      1540,
+      590,
+      66,
+      24
+    ],
+    "centroid": [
+      1573.0,
+      602.0
+    ],
+    "source": "easyocr"
+  },
+  {
+    "text": "B1012B",
+    "confidence": 76.32784865297485,
+    "bbox": [
+      1631,
+      1207,
+      64,
+      20
+    ],
+    "centroid": [
+      1663.0,
+      1217.0
+    ],
+    "source": "easyocr"
+  },
+  {
+    "text": "B1012C",
+    "confidence": 89.0099254065836,
+    "bbox": [
+      1630,
+      1358,
+      68,
+      24
+    ],
+    "centroid": [
+      1664.0,
+      1370.0
+    ],
+    "source": "easyocr"
+  }
+]
