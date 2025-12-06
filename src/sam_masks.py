@@ -1,5 +1,3 @@
-# src/sam_masks.py
-import os
 import torch
 import numpy as np
 from PIL import Image
@@ -10,8 +8,6 @@ from sam2.automatic_mask_generator import SAM2AutomaticMaskGenerator
 
 
 def get_default_device():
-    os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
-
     if torch.backends.mps.is_available():
         print("Using MPS")
         return torch.device("mps")
