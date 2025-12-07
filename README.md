@@ -39,6 +39,17 @@ See [SETUP.md](SETUP.md) for detailed installation instructions.
 
 ### Quantitative Results
 
+#### OCR Models Comparison (Tesseract VS EasyOCR)
+
+| floorplan_name | tesseract_identified | tesseract_filtered_out | easyocr_identified | easyocr_filtered_out | combined_labels | easyocr_contributed |
+| -------------- | -------------------- | ---------------------- | ------------------ | -------------------- | --------------- | ------------------- |
+| floorplan1     | 2                    | 34                     | 0                  | 24                   | 2               | 0                   |
+| floorplan2     | 16                   | 46                     | 1                  | 36                   | 16              | 0                   |
+| floorplan3     | 13                   | 57                     | 4                  | 39                   | 13              | 0                   |
+| floorplan4     | 6                    | 57                     | 2                  | 30                   | 7               | 1                   |
+| floorplan5     | 16                   | 70                     | 2                  | 43                   | 16              | 0                   |
+| floorplan6     | 18                   | 35                     | 11                 | 26                   | 19              | 1                   |
+
 ### Qualitative Outcomes
 
 ## Contributions
