@@ -1,3 +1,4 @@
+# AI attrbution: converted by Copilot and ChatGPT-5 from the notebooks
 from typing import List, Dict, Any, Tuple
 import numpy as np
 

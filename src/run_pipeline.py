@@ -1,3 +1,4 @@
+# AI attrbution: converted by Copilot and ChatGPT-5 from the notebooks
 import os
 os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
 import logging
@@ -7,16 +8,15 @@ import numpy as np
 from pathlib import Path
 from PIL import Image
 
-from src.ocr_labels import run_ocr_combined
-from src.matcher import match_labels_to_masks
-from src.add_unmatched_masks import main as add_unmatched_masks
-from src.utils import mask_bbox_from_bool
+from ocr_labels import run_ocr_combined
+from matcher import match_labels_to_masks
+from add_unmatched_masks import main as add_unmatched_masks
+from utils import mask_bbox_from_bool
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 BASE = Path("data")
-INTER = BASE/"intermediate"
 OUT = BASE/"output"
 OUT.mkdir(parents=True, exist_ok=True)
 

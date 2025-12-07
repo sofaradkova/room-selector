@@ -1,3 +1,4 @@
+# AI attrbution: converted by Copilot and ChatGPT-5 from the notebooks
 import os
 import pickle
 import json
@@ -9,9 +10,6 @@ import torch
 from sam2.build_sam import build_sam2
 from sam2.sam2_image_predictor import SAM2ImagePredictor
 
-# -------------------------
-# Helper utilities
-# -------------------------
 def parse_bbox_str(s: str) -> Tuple[int, int, int, int]:
     """Parse a bbox string like '1081,1561,59,13' or '1081 1561 59 13' into ints (x,y,w,h)."""
     parts = s.replace(",", " ").split()
@@ -57,10 +55,6 @@ def device_from_args(force_cpu: bool = False):
         return torch.device("mps")
     return torch.device("cpu")
 
-
-# -------------------------
-# Main logic
-# -------------------------
 def main(
     image_path: str,
     combined_path: Optional[str],

@@ -1,3 +1,4 @@
+# AI attrbution: converted by Copilot and ChatGPT-5 from the notebooks
 import torch
 import numpy as np
 from PIL import Image

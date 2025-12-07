@@ -1,3 +1,4 @@
+# AI attrbution: converted by Copilot and ChatGPT-5 from the notebooks
 import pickle
 from pathlib import Path
 import numpy as np
@@ -10,7 +11,6 @@ def save_masks_pickle(masks, path):
     with open(path, 'wb') as f:
         pickle.dump(masks, f, protocol=pickle.HIGHEST_PROTOCOL)
     print("Saved masks pickle ->", path)
-
 
 def load_masks_pickle(path):
     """Load mask pickle safely."""

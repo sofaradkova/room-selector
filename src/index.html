@@ -1,17 +1,18 @@
+
+<!-- This code was generated with AI assistance (Copilot, ChatGPT5) -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Housing Room Selection - University Living</title>
+  <title>Duke Housing</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    /* Prevent the entire page from scrolling */
     html, body {
       height: 100%;
-      overflow: hidden; /* <-- page-level scrolling disabled */
+      overflow: hidden;
     }
 
     body {
@@ -56,39 +57,35 @@
       gap: 6px;
     }
 
-    /* allow flex children to shrink correctly (important for inner scrolling) */
     #main-container {
       display: flex;
       gap: 20px;
       padding: 20px;
       flex: 1;
-      overflow: hidden;   /* <-- ensure page stays unscrollable */
-      min-height: 0; /* <-- allow children to limit height for scrolling */
+      overflow: hidden;
+      min-height: 0;
     }
 
-    /* sidebar stays a column and can contain a scrollable list */
     #sidebar {
       width: 320px;
       background: white;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       display: flex;
-      flex-direction: column; /* <-- ensure header / controls / list stack vertically */
+      flex-direction: column;
       overflow: hidden;
       border: 1px solid #e2e8f0;
-      min-height: 0; /* <-- ensure children can overflow properly */
+      min-height: 0;
     }
 
-    /* make only the room list scrollable */
     #labelList {
       flex: 1;
-      overflow-y: auto;   /* <-- only this element scrolls */
-      -webkit-overflow-scrolling: touch; /* smooth on iOS */
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       padding: 12px;
-      min-height: 0;      /* <-- IMPORTANT for flexbox children to scroll */
+      min-height: 0;
     }
 
-    /* place the floorplan at the top of its area (not vertically centered) */
     #canvas-wrapper {
       flex: 1;
       background: white;
@@ -96,20 +93,18 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       overflow: hidden;
       display: flex;
-      align-items: flex-start;   /* <-- put content at the top */
-      justify-content: center;   /* horizontally center it if you like */
+      align-items: flex-start;
+      justify-content: center;
       padding: 16px;
       border: 1px solid #e2e8f0;
       min-height: 0;
     }
 
-    /* make the canvas respect its container's width and not stretch vertically */
     #floorCanvas {
       display: block;
-      width: 100%;            /* fill available width */
-      height: auto;           /* keep natural aspect ratio */
+      width: 100%;
+      height: auto;
       max-width: 100%;
-      /* limit canvas so it won't push layout (uses available viewport height) */
       max-height: calc(100vh - 160px);
       background: white;
       border-radius: 8px;
@@ -314,9 +309,9 @@
 
   <script>
     (async function(){
-      const manifestUrl = './data/output/labels.json';
-      const masksBase = './data/output/';
-      const imagesRawBase = './data/raw/';
+      const manifestUrl = '../data/output/labels.json';
+      const masksBase = '../data/output/';
+      const imagesRawBase = '../data/raw/';
     
       // College housing color scheme
       const COLOR_TAKEN = [239, 68, 68];      // red
