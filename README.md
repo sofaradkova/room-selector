@@ -39,7 +39,15 @@ See [SETUP.md](SETUP.md) for detailed installation instructions.
 
 ### Quantitative Results
 
+#### Tesseract Page Segmentation Modes Comparison
+
+I tested different page segmentation mode settings for Tesseract. All of them identified different numbers of text fragments in the floorplan but all except "--psm 6" found 18 labels that corresponded to room numbers.
+
+![Tesseract Page Segmentation Modes Comparison](images/my_pic.png)
+
 #### OCR Models Comparison (Tesseract VS EasyOCR)
+
+I chose to proceed with the combination of two models since Tesseract identified most room labels but still missed a few in some cases, which were caught by EasyOCR.
 
 | floorplan_name | tesseract_identified | tesseract_filtered_out | easyocr_identified | easyocr_filtered_out | combined_labels | easyocr_contributed |
 | -------------- | -------------------- | ---------------------- | ------------------ | -------------------- | --------------- | ------------------- |
