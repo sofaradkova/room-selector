@@ -37,7 +37,7 @@ See [SETUP.md](SETUP.md) for detailed installation instructions.
 
 ## Evaluation
 
-### Quantitative Results
+### Quantitative Testing
 
 #### Tesseract Page Segmentation Modes Comparison
 
@@ -58,7 +58,13 @@ I chose to proceed with the combination of two models since Tesseract identified
 | floorplan5     | 16                   | 70                     | 2                  | 43                   | 16              | 0                   |
 | floorplan6     | 18                   | 35                     | 11                 | 26                   | 19              | 1                   |
 
-### Qualitative Outcomes
+### Qualitative Testing
+
+#### Progression from default SAM run to the final matching with labels
+
+| SAM 2.1 Default      | SAM 2.1 No Text      | SAM 2.1 Best Parameters |
+| -------------------- | -------------------- | ----------------------- |
+| ![](images/sam1.png) | ![](images/sam2.png) | ![](images/sam3.png)    |
 
 ## Contributions
 
