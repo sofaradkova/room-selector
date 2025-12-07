@@ -2,108 +2,334 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Choose Your Room</title>
+  <title>Housing Room Selection - University Living</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
-    /* Layout: sidebar + content. Allow scrolling in right panel */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* Prevent the entire page from scrolling */
+    html, body {
+      height: 100%;
+      overflow: hidden; /* <-- page-level scrolling disabled */
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      margin: 12px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
       display: flex;
-      gap: 16px;
-      height: calc(100vh - 24px);
-      box-sizing: border-box;
+      flex-direction: column;
     }
 
+    #header {
+      background: #012169;
+      padding: 28px 32px;
+      border-bottom: 3px solid #00539B;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    #header h1 {
+      color: white;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    #header p {
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    #header-info {
+      display: flex;
+      gap: 24px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    #header-info span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* allow flex children to shrink correctly (important for inner scrolling) */
+    #main-container {
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+      flex: 1;
+      overflow: hidden;   /* <-- ensure page stays unscrollable */
+      min-height: 0; /* <-- allow children to limit height for scrolling */
+    }
+
+    /* sidebar stays a column and can contain a scrollable list */
     #sidebar {
-      width: 260px;
-      max-height: 100%;
-      overflow: auto;
-      border-right: 1px solid #ddd;
-      padding-right: 12px;
-      box-sizing: border-box;
-    }
-
-    /* Right panel is scrollable if content larger than viewport */
-    #canvas-wrapper {
-      flex: 1 1 auto;
-      max-height: 100%;
-      overflow: auto;            /* <--- this allows vertical scroll when image is tall */
-      background: #f8f8f8;
+      width: 320px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       display: flex;
-      align-items: flex-start;   /* top-align the canvas */
-      justify-content: center;
-      padding: 8px;
-      box-sizing: border-box;
+      flex-direction: column; /* <-- ensure header / controls / list stack vertically */
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      min-height: 0; /* <-- ensure children can overflow properly */
     }
 
-    /* We set the canvas to display at 100% width of wrapper's available width
-       while its internal resolution remains image natural size (pixel-perfect) */
+    /* make only the room list scrollable */
+    #labelList {
+      flex: 1;
+      overflow-y: auto;   /* <-- only this element scrolls */
+      -webkit-overflow-scrolling: touch; /* smooth on iOS */
+      padding: 12px;
+      min-height: 0;      /* <-- IMPORTANT for flexbox children to scroll */
+    }
+
+    /* place the floorplan at the top of its area (not vertically centered) */
+    #canvas-wrapper {
+      flex: 1;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      display: flex;
+      align-items: flex-start;   /* <-- put content at the top */
+      justify-content: center;   /* horizontally center it if you like */
+      padding: 16px;
+      border: 1px solid #e2e8f0;
+      min-height: 0;
+    }
+
+    /* make the canvas respect its container's width and not stretch vertically */
     #floorCanvas {
       display: block;
-      width: 100%;
-      height: auto;
-      max-width: 1600px; /* optional cap */
-      border: 1px solid #aaa;
-      background: #fff;
+      width: 100%;            /* fill available width */
+      height: auto;           /* keep natural aspect ratio */
+      max-width: 100%;
+      /* limit canvas so it won't push layout (uses available viewport height) */
+      max-height: calc(100vh - 160px);
+      background: white;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+
+    #sidebar-header {
+      padding: 16px;
+      border-bottom: 1px solid #e2e8f0;
+      background: #f8fafc;
+    }
+
+    #sidebar-header h2 {
+      font-size: 16px;
+      color: #1e293b;
+      margin-bottom: 8px;
+    }
+
+    #sidebar-header p {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    #controls {
+      padding: 14px 16px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    #controls button {
+      flex: 1;
+      min-width: 90px;
+      padding: 10px 14px;
+      background: #012169;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 12px;
+    }
+
+    #controls button:hover {
+      background: #00539B;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(14, 165, 233, 0.3);
+    }
+
+    #controls label {
+      font-size: 12px;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    #controls input[type="checkbox"] {
+      cursor: pointer;
+      accent-color: #012169;
     }
 
     .label-item {
-      padding: 8px;
+      padding: 12px;
       cursor: pointer;
-      border-radius: 6px;
-      margin-bottom: 8px;
+      border-radius: 8px;
+      margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
       user-select: none;
+      transition: all 0.2s;
+      background: #f8fafc;
+      border: 2px solid transparent;
     }
-    .label-item:hover { background: #f7f7f7; }
-    .label-item.active { background: #eef6ff; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.03); }
 
-    .room-name { font-weight: 600; }
+    .label-item:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .label-item.active {
+      background: #dbeafe;
+      border-color: #012169;
+      box-shadow: 0 2px 8px rgba(14, 165, 233, 0.2);
+    }
+
+    .room-info {
+      flex: 1;
+    }
+
+    .room-name {
+      font-weight: 700;
+      color: #1e293b;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .room-details {
+      font-size: 11px;
+      color: #64748b;
+    }
+
     .badge {
-      padding: 4px 8px;
-      border-radius: 14px;
-      font-size: 0.85em;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
       color: white;
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
-    .taken { background: #dc3545; }        /* red */
-    .available { background: #28a745; }    /* green */
 
-    #controls { margin-bottom: 12px; }
-    #legend { margin-top: 12px; font-size: 0.9em; color: #555; }
-    #legend .legend-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
-    #legend .swatch { width:20px; height:14px; border-radius:3px; display:inline-block; border:1px solid rgba(0,0,0,0.08); }
+    .taken {
+      background: #ef4444;
+    }
+
+    .available {
+      background: #10b981;
+    }
+
+    #labelList::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #labelList::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 3px;
+    }
+
+    #labelList::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+
+    #labelList::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    .legend {
+      padding: 12px 16px;
+      border-top: 1px solid #e2e8f0;
+      font-size: 11px;
+      background: #f8fafc;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .legend-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .legend-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 2px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
   </style>
 </head>
 <body>
-  <div id="sidebar">
-    <div id="controls">
-      <button id="clearBtn">Clear</button>
-      <label style="display:inline-block;margin-left:10px;">
-        <input type="checkbox" id="singleMode" checked> single-select
-      </label>
+  <div id="header">
+    <h1>Pick your room for the next semester!</h1>
+    <div id="header-info">
+      <span><i class="fas fa-calendar"></i> Semester: Spring 2025</span>
+      <span><i class="fas fa-home"></i> Quad: Hollows</span>
+      <span id="user-info"><i class="fas fa-user"></i> Selection time: 7:00-7:05PM</span>
     </div>
-
-    <div id="labelList">Loading labels…</div>
   </div>
 
-  <div id="canvas-wrapper">
-    <canvas id="floorCanvas"></canvas>
+  <div id="main-container">
+    <div id="sidebar">
+      <div id="sidebar-header">
+        <h2>Available Rooms</h2>
+        <p id="room-count">Loading...</p>
+      </div>
+
+      <div id="controls">
+        <button id="clearBtn">Clear</button>
+        <label>
+          <input type="checkbox" id="singleMode" checked> Single Select
+        </label>
+      </div>
+      <div id="labelList">Loading rooms…</div>
+    </div>
+
+    <div id="canvas-wrapper">
+      <canvas id="floorCanvas"></canvas>
+    </div>
   </div>
 
   <script>
     (async function(){
-      // CONFIG: manifest & folders (trailing slashes help safe concatenation)
       const manifestUrl = './data/output/labels.json';
-      const masksBase = './data/output/';   // must end with '/'
-      const imagesRawBase = './data/raw/';  // where base image lives if manifest.base_image is just a filename
+      const masksBase = './data/output/';
+      const imagesRawBase = './data/raw/';
     
-      const COLOR_TAKEN = [220, 20, 60];
-      const COLOR_AVAILABLE = [50, 205, 50];
+      // College housing color scheme
+      const COLOR_TAKEN = [239, 68, 68];      // red
+      const COLOR_AVAILABLE = [16, 185, 129];  // green
       const DEFAULT_ALPHA = 0.45;
+    
+      // Simulate different room statuses
+      function getRoomStatus(text) {
+        const hash = Array.from(text || '').reduce((h, c) => h ^ c.charCodeAt(0), 0);
+        const random = hash % 2;
+        if (random === 0) return 'available';
+        return 'taken';
+      }
     
       function ensureArrayOf3(c) {
         if (!c) return null;
@@ -111,25 +337,13 @@
         return null;
       }
     
-      function hashStringToBool(s) {
-        let h = 2166136261 >>> 0;
-        for (let i=0;i<s.length;i++){
-          h ^= s.charCodeAt(i);
-          h = Math.imul(h, 16777619) >>> 0;
-        }
-        return (h & 1) === 1;
-      }
-    
-      // helper: simple safe join that avoids double slashes
       function joinUrl(base, name) {
         if (!name) return null;
         if (name.startsWith('http://') || name.startsWith('https://') || name.startsWith('/')) return name;
-        // ensure base ends with single '/'
         if (!base.endsWith('/')) base = base + '/';
         return base + name.replace(/^\/+/,'');
       }
     
-      // load manifest (with error handling)
       let manifest;
       try {
         const r = await fetch(manifestUrl);
@@ -141,49 +355,38 @@
         return;
       }
     
-      // Resolve base image: if manifest.base_image is a path use it; otherwise try data/raw/
       let baseImageCandidate = manifest.base_image || 'floorplan6.png';
       let baseImageUrl;
       if (baseImageCandidate.startsWith('http') || baseImageCandidate.includes('/')) {
         baseImageUrl = baseImageCandidate;
       } else {
-        // try data/raw/filename
         baseImageUrl = joinUrl(imagesRawBase, baseImageCandidate);
       }
     
       const labels = manifest.labels || [];
     
-      // show legend swatches if present
-      if (document.getElementById('swatch-taken')) {
-        document.getElementById('swatch-taken').style.background = `rgb(${COLOR_TAKEN.join(',')})`;
-        document.getElementById('swatch-available').style.background = `rgb(${COLOR_AVAILABLE.join(',')})`;
-      }
-    
-      // DOM refs
       const labelList = document.getElementById('labelList');
       const canvas = document.getElementById('floorCanvas');
       const ctx = canvas.getContext('2d');
       const clearBtn = document.getElementById('clearBtn');
       const singleModeCheckbox = document.getElementById('singleMode');
+      const roomCountEl = document.getElementById('room-count');
     
-      // load base image with clear console message if 404
       const baseImg = new Image();
       baseImg.crossOrigin = 'anonymous';
       baseImg.src = baseImageUrl;
-      await new Promise((res, rej) => {
+      await new Promise((res) => {
         baseImg.onload = () => {
           console.info('Base image loaded:', baseImageUrl);
           res();
         };
         baseImg.onerror = (e) => {
           console.error('Failed to load base image:', baseImageUrl, e);
-          // still resolve so UI doesn't hang — but show error
-          labelList.textContent = `Failed to load base image: ${baseImageUrl} — check path in console`;
+          labelList.textContent = `Failed to load base image: ${baseImageUrl}`;
           res();
         };
       });
     
-      // If baseImg didn't load (naturalWidth might be 0), guard:
       const naturalW = baseImg.naturalWidth || 2000;
       const naturalH = baseImg.naturalHeight || 1200;
       canvas.width = naturalW;
@@ -191,13 +394,12 @@
     
       function drawBase(){
         ctx.clearRect(0,0,canvas.width, canvas.height);
-        // if image failed to load, draw placeholder background + message
         if (!baseImg.complete || baseImg.naturalWidth === 0) {
           ctx.fillStyle = '#f0f0f0';
           ctx.fillRect(0,0,canvas.width, canvas.height);
           ctx.fillStyle = '#333';
           ctx.font = '20px sans-serif';
-          ctx.fillText('Base image failed to load — see console (F12)', 20, 40);
+          ctx.fillText('Floor plan failed to load', 20, 40);
           return;
         }
         ctx.drawImage(baseImg, 0, 0, canvas.width, canvas.height);
@@ -205,7 +407,6 @@
     
       drawBase();
     
-      // helper to load images with error console (masks)
       async function loadImageWithLogging(src) {
         return new Promise((res) => {
           if (!src) { res(null); return; }
@@ -220,7 +421,6 @@
         });
       }
     
-      // preload and colorize masks (resolving mask paths relative to masksBase)
       async function preloadAndColorizeMasks() {
         const tmp = document.createElement('canvas');
         tmp.width = canvas.width; tmp.height = canvas.height;
@@ -228,11 +428,11 @@
     
         for (let i = 0; i < labels.length; i++) {
           const L = labels[i];
-          L._occupied = (typeof L.occupied === 'boolean') ? L.occupied : hashStringToBool(String(L.text || L.index || ''));
-          L._color = ensureArrayOf3(L.color) || (L._occupied ? COLOR_TAKEN : COLOR_AVAILABLE);
+          L._status = getRoomStatus(L.text);
+          
+          if (L._status === 'taken') L._color = COLOR_TAKEN;
+          else L._color = COLOR_AVAILABLE;
     
-          // resolve mask url robustly:
-          // if mask_file already contains a path or http, use it. otherwise join with masksBase
           if (L.mask_file) {
             L._maskUrl = (L.mask_file.startsWith('http') || L.mask_file.startsWith('/')) ? L.mask_file : joinUrl(masksBase, L.mask_file);
           } else {
@@ -274,6 +474,10 @@
       await preloadAndColorizeMasks();
       drawBase();
     
+      // Update room count
+      const availableCount = labels.filter(l => l._status === 'available').length;
+      roomCountEl.textContent = `${availableCount} Available • ${labels.length} Total`;
+    
       const activeSet = new Set();
     
       function makeLabelElement(lbl, idx) {
@@ -281,64 +485,80 @@
         div.className = 'label-item';
         div.dataset.idx = idx;
     
-        const left = document.createElement('div');
-        left.className = 'room-name';
-        left.textContent = String(lbl.text || `Room ${idx}`);
+        const info = document.createElement('div');
+        info.className = 'room-info';
+    
+        const name = document.createElement('div');
+        name.className = 'room-name';
+        name.textContent = String(lbl.text || `Room ${idx}`);
+    
+        const details = document.createElement('div');
+        details.className = 'room-details';
+        details.textContent = lbl._status === 'available' ? 'Single Occupancy' : 'Occupied';
+    
+        info.appendChild(name);
+        info.appendChild(details);
     
         const badge = document.createElement('div');
-        badge.className = 'badge ' + (lbl._occupied ? 'taken' : 'available');
-        badge.textContent = lbl._occupied ? 'Taken' : 'Available';
+        badge.className = 'badge ' + lbl._status;
+        badge.textContent = lbl._status === 'available' ? 'Available' : 'Taken';
     
-        div.appendChild(left);
+        div.appendChild(info);
         div.appendChild(badge);
     
-        div.addEventListener('click', () => {
-          const id = Number(div.dataset.idx);
-          if (singleModeCheckbox.checked) {
-            if (activeSet.has(id)) activeSet.delete(id);
-            else { activeSet.clear(); activeSet.add(id); }
-          } else {
-            if (activeSet.has(id)) activeSet.delete(id);
-            else activeSet.add(id);
-          }
-    
-          document.querySelectorAll('.label-item').forEach(el => {
-            el.classList.toggle('active', activeSet.has(Number(el.dataset.idx)));
+        // Disable click for unavailable rooms
+        if (lbl._status !== 'available') {
+          div.style.opacity = '0.6';
+          div.style.cursor = 'not-allowed';
+          div.addEventListener('click', (e) => {
+            e.preventDefault();
+            alert(`This room is ${lbl._status}. You cannot select it.`);
           });
-    
-          drawBase();
-          for (const id of Array.from(activeSet).sort((a,b)=>a-b)){
-            const L = labels[id];
-            if (!L || !L._coloredCanvas) continue;
-            ctx.drawImage(L._coloredCanvas, 0, 0);
-          }
-        });
+        } else {
+          div.addEventListener('click', () => {
+            const id = Number(div.dataset.idx);
+            if (singleModeCheckbox.checked) {
+              if (activeSet.has(id)) activeSet.delete(id);
+              else { activeSet.clear(); activeSet.add(id); }
+            } else {
+              if (activeSet.has(id)) activeSet.delete(id);
+              else activeSet.add(id);
+            }
+        
+            document.querySelectorAll('.label-item').forEach(el => {
+              el.classList.toggle('active', activeSet.has(Number(el.dataset.idx)));
+            });
+        
+            drawBase();
+            for (const id of Array.from(activeSet).sort((a,b)=>a-b)){
+              const L = labels[id];
+              if (!L || !L._coloredCanvas) continue;
+              ctx.drawImage(L._coloredCanvas, 0, 0);
+            }
+          });
+        }
     
         return div;
       }
     
-      // populate list
       labelList.innerHTML = '';
       labels.forEach((lbl,i) => {
         const el = makeLabelElement(lbl,i);
         labelList.appendChild(el);
       });
     
-      // Clear button
       if (clearBtn) clearBtn.addEventListener('click', () => {
         activeSet.clear();
         drawBase();
         document.querySelectorAll('.label-item').forEach(el => el.classList.remove('active'));
       });
     
-      console.info('Viewer initialized. If masks or base image are missing check DevTools Network tab for 404s and verify paths:');
-      console.info('  labels.json:', manifestUrl);
-      console.info('  base image resolved to:', baseImageUrl);
-      console.info('  masks base:', masksBase);
+      console.info('Housing room selector initialized');
     
     })();
     </script>    
 </body>
 </html>
+
 
 
