@@ -62,9 +62,21 @@ I chose to proceed with the combination of two models since Tesseract identified
 
 #### Progression from default SAM run to the final matching with labels
 
+With the text present, SAM identified a lot of extranious bounding boxes around text. Once the text was removed, fewer irrelevant masks were generated but a lot of rooms were still missing. After experimenting with different combinations of parameters, this was the best result that captured all rooms.
+
 | SAM 2.1 Default      | SAM 2.1 No Text      | SAM 2.1 Best Parameters |
 | -------------------- | -------------------- | ----------------------- |
 | ![](images/sam1.png) | ![](images/sam2.png) | ![](images/sam3.png)    |
+
+To eliminate the masks that did not correspond to rooms, I experimented with filtering by height, width, and area finding the most accurate filter.
+
+![](images/sam4.png)
+
+When masks were matched with labels initially, some labels remained unmatched (visualized in red), so their centroids and padded bounding boxes were passed into SAM to find masks in those specific image fragments.
+
+| Initial Labels/Masks Match | Improved Labels/Mask Match |
+| -------------------------- | -------------------------- |
+| ![](images/sam5.png)       | ![](images/sam6.png)       |
 
 ## Contributions
 
