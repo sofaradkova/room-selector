@@ -224,15 +224,7 @@ def combine_ocr_results(tess_list: List[Dict],
     combined = list(tess_list) + added
     return combined
 
-
-def normalize_label_text(text: str) -> str:
-    """Collapse whitespace/newlines and title-case the text: 'CONFERENCE\nROOM' -> 'Conference Room'."""
-    t = " ".join(text.split())
-    return t.title()
-
-
 def run_ocr_combined(image_path: str,
-                     use_easyocr: bool = True,
                      pattern: Optional[re.Pattern] = DEFAULT_PATTERN,
                      tess_config: str = "--psm 12",
                      easy_iou_thresh: float = 0.25,
@@ -256,9 +248,8 @@ def run_ocr_combined(image_path: str,
             cx = float(item['cx']); cy = float(item['cy'])
         else:
             cx, cy = _centroid_from_bbox(item['bbox'])
-        txt = normalize_label_text(item['text'])
         out.append({
-            "text": txt,
+            "text": item['text'],
             "confidence": float(item.get("confidence", 0.0)),
             "bbox": (int(item['bbox'][0]), int(item['bbox'][1]), int(item['bbox'][2]), int(item['bbox'][3])),
             "centroid": [float(cx), float(cy)],

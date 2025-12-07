@@ -10,26 +10,15 @@ from PIL import Image
 from src.ocr_labels import run_ocr_combined
 from src.matcher import match_labels_to_masks
 from src.add_unmatched_masks import main as add_unmatched_masks
+from src.utils import mask_bbox_from_bool
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 BASE = Path("data")
-RAW = BASE/"raw"
 INTER = BASE/"intermediate"
 OUT = BASE/"output"
-INTER.mkdir(parents=True, exist_ok=True)
 OUT.mkdir(parents=True, exist_ok=True)
-
-
-def mask_bbox_from_bool(mask_bool):
-    """Returns (x,y,w,h) for a 2D boolean mask"""
-    ys, xs = np.where(mask_bool)
-    if len(xs) == 0:
-        return (0, 0, 0, 0)
-    x_min, x_max = xs.min(), xs.max()
-    y_min, y_max = ys.min(), ys.max()
-    return (int(x_min), int(y_min), int(x_max - x_min), int(y_max - y_min))
 
 
 def create_rectangular_mask(mask_bool):

@@ -68,7 +68,7 @@ def generate_masks(
 
     filtered = []
     for m in masks:
-        x, y, w, h = m["bbox"]
+        _, _, w, h = m["bbox"]
         area = m["area"]
 
         if w <= max_width and min_height <= h <= max_height:

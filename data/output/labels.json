@@ -3,68 +3,117 @@
   "labels": [
     {
       "index": 0,
-      "text": "B1016B",
+      "text": "B1016A",
+      "mask_id": 2,
       "mask_file": "mask_0.png"
     },
     {
       "index": 1,
-      "text": "B1016C",
+      "text": "B1016B",
+      "mask_id": 0,
       "mask_file": "mask_1.png"
     },
     {
       "index": 2,
-      "text": "B1016A",
+      "text": "B1016C",
+      "mask_id": 1,
       "mask_file": "mask_2.png"
     },
     {
       "index": 3,
       "text": "B1016D",
+      "mask_id": 3,
       "mask_file": "mask_3.png"
     },
     {
       "index": 4,
-      "text": "B1015D",
+      "text": "B1014B",
+      "mask_id": 11,
       "mask_file": "mask_4.png"
     },
     {
       "index": 5,
-      "text": "B1011B",
+      "text": "B1014C",
+      "mask_id": 12,
       "mask_file": "mask_5.png"
     },
     {
       "index": 6,
-      "text": "B1011C",
+      "text": "B1015A",
+      "mask_id": 7,
       "mask_file": "mask_6.png"
     },
     {
       "index": 7,
-      "text": "B1014B",
+      "text": "B1015B",
+      "mask_id": 4,
       "mask_file": "mask_7.png"
     },
     {
       "index": 8,
-      "text": "B1014C",
+      "text": "B1015C",
+      "mask_id": 5,
       "mask_file": "mask_8.png"
     },
     {
       "index": 9,
-      "text": "B1012A",
+      "text": "B1015D",
+      "mask_id": 6,
       "mask_file": "mask_9.png"
     },
     {
       "index": 10,
-      "text": "B1014A",
+      "text": "B1014D",
+      "mask_id": 15,
       "mask_file": "mask_10.png"
     },
     {
       "index": 11,
-      "text": "B1014D",
+      "text": "B1012A",
+      "mask_id": 13,
       "mask_file": "mask_11.png"
     },
     {
       "index": 12,
-      "text": "B1012C",
+      "text": "B1011B",
+      "mask_id": 8,
       "mask_file": "mask_12.png"
+    },
+    {
+      "index": 13,
+      "text": "B1012B",
+      "mask_id": 17,
+      "mask_file": "mask_13.png"
+    },
+    {
+      "index": 14,
+      "text": "B1012C",
+      "mask_id": 16,
+      "mask_file": "mask_14.png"
+    },
+    {
+      "index": 15,
+      "text": "B1011C",
+      "mask_id": 9,
+      "mask_file": "mask_15.png"
+    },
+    {
+      "index": 16,
+      "text": "B1012D",
+      "mask_id": 18,
+      "mask_file": "mask_16.png"
+    },
+    {
+      "index": 17,
+      "text": "B1011D",
+      "mask_id": 19,
+      "mask_file": "mask_17.png"
+    },
+    {
+      "index": 18,
+      "text": "B1014A",
+      "mask_id": 14,
+      "mask_file": "mask_18.png"
     }
   ]
 }
