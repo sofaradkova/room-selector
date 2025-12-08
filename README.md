@@ -1,5 +1,7 @@
 # Duke Housing Room Selection
 
+https://sofaradkova.github.io/room-selector/
+
 ## What It Does
 
 This project is meant to help Duke students pick rooms during the housing selection process. Right now when entering the housing portal we can only see the room numbers and have to constantly cross-reference them with floor plans published on a separate webpage and manually search for the right room. The choice has to be done under the constraint of a 5-minute selection time slot, so the project is meant to address this inconvenience. This is an MVP for one floor plan, but in the future, it will be extended to view floor plans for all Duke quads.
@@ -32,7 +34,7 @@ See [SETUP.md](SETUP.md) for detailed installation instructions.
 
 ## Video Links
 
-- **Demo Video**: [INSERT DEMO VIDEO LINK]
+- [**Demo Video**](https://drive.google.com/file/d/143F9AvVv126VwEi8oijM3nrvnNg8PF86/view?usp=sharing)
 - **Technical Walkthrough**: [INSERT TECHNICAL WALKTHROUGH LINK]
 
 ## Evaluation
