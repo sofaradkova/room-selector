@@ -310,14 +310,31 @@
   <script>
     (async function(){
       function repoPrefix() {
-        const parts = window.location.pathname.split('/').filter(Boolean);
-        return parts.length > 0 ? `/${parts[0]}` : '';
+        // when served from a project site like "https://user.github.io/repo-name/" -> use "/repo-name"
+        // otherwise (localhost, file://, custom domain) return '' so relative paths resolve normally.
+        try {
+          const host = window.location.hostname || '';
+          // Quick detection of localhost / file protocol
+          if (host === 'localhost' || host === '127.0.0.1' || window.location.protocol === 'file:') {
+            return '';
+          }
+          // If served on github.io and pathname has a first segment -> that's the repo name
+          if (host.endsWith('github.io')) {
+            const parts = window.location.pathname.split('/').filter(Boolean);
+            if (parts.length > 0) return `/${parts[0]}`;
+          }
+          // Otherwise assume site is at root or custom domain; don't prefix
+          return '';
+        } catch (e) {
+          return '';
+        }
       }
-      const PREFIX = repoPrefix(); // "/room-selector" on GitHub Project Pages, "" on user root
 
+      const PREFIX = repoPrefix();
       const manifestUrl = `${PREFIX}/data/output/labels.json`;
       const masksBase   = `${PREFIX}/data/output/`;
       const imagesRawBase = `${PREFIX}/data/raw/`;
+
     
       // College housing color scheme
       const COLOR_TAKEN = [239, 68, 68];      // red
