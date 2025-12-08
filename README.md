@@ -35,7 +35,7 @@ See [SETUP.md](SETUP.md) for detailed installation instructions.
 ## Video Links
 
 - [**Demo Video**](https://drive.google.com/file/d/143F9AvVv126VwEi8oijM3nrvnNg8PF86/view?usp=sharing)
-- **Technical Walkthrough**: [INSERT TECHNICAL WALKTHROUGH LINK]
+- [**Technical Walkthrough**](https://drive.google.com/file/d/1sBXjLl_jCcEg7Asezgb8ZvYmrPuPDJFp/view?usp=sharing)
 
 ## Evaluation
 
