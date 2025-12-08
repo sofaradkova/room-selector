@@ -309,9 +309,15 @@
 
   <script>
     (async function(){
-      const manifestUrl = './data/output/labels.json';
-      const masksBase = './data/output/';
-      const imagesRawBase = './data/raw/';
+      function repoPrefix() {
+        const parts = window.location.pathname.split('/').filter(Boolean);
+        return parts.length > 0 ? `/${parts[0]}` : '';
+      }
+      const PREFIX = repoPrefix(); // "/room-selector" on GitHub Project Pages, "" on user root
+
+      const manifestUrl = `${PREFIX}/data/output/labels.json`;
+      const masksBase   = `${PREFIX}/data/output/`;
+      const imagesRawBase = `${PREFIX}/data/raw/`;
     
       // College housing color scheme
       const COLOR_TAKEN = [239, 68, 68];      // red
