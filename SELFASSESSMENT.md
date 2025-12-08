@@ -135,7 +135,7 @@
     - `notebooks/ocr.ipynb`:
     - Complete OCR exploration and comparison
 
-### Following Directions
+## Following Directions
 
 - Ontime submission by 5pm on Tuesday, December 9th (note that late submissions will be accepted but only for the normal 72 hour late period, and will not qualify for this rubric item). (3)
 - Self-assessment submitted that follows guidelines for at most 15 selections in Machine Learning with evidence (3)
@@ -152,7 +152,7 @@
 - Attended 1-2 project workshop days (1)
 - Attended 3-4 project workshop days (1)
 
-### **Project Cohesion**
+## **Project Cohesion**
 
 - README clearly articulates a single, unified project goal or research question
 - Project demo video effectively communicates why the project matters to a non-technical audience in non-technical terms
