@@ -1,5 +1,7 @@
 # Duke Housing Room Selection
 
+## Demo
+
 https://sofaradkova.github.io/room-selector/
 
 ## What It Does
